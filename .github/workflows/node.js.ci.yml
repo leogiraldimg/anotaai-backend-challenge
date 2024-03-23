@@ -50,5 +50,8 @@ jobs:
     - name: Execute tests
       run: npm run test:cov
 
-    - name: Export CodeClimate test coverage
-      run: ./cc-test-reporter after-build --coverage-input-type clover --prefix coverage
+    - name: Format CodeCLimate test results
+      run: ./cc-test-reporter format-coverage -t lcov -o coverage/coverage-final.json coverage/lcov.info
+
+    - name: Upload CodeClimate test results
+      run: ./cc-test-reporter upload-coverage
