@@ -51,7 +51,7 @@ jobs:
       run: npm run test:cov
 
     - name: Format CodeCLimate test results
-      run: ./cc-test-reporter format-coverage -t lcov -o coverage/coverage-final.json coverage/lcov.info
+      run: ./cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.json coverage/lcov.info
 
     - name: Upload CodeClimate test results
       run: ./cc-test-reporter upload-coverage
