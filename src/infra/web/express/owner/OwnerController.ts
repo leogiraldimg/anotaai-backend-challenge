@@ -15,26 +15,38 @@ class OwnerController {
 
     async create(req: Request, res: Response) {
         try {
-            const result = await this.registerController.create(req.body);
-            res.status(201).json(result);
-        } catch (error) {
-            if (error instanceof ResourceConflictException) {
-                res.status(409).json({
-                    error: "Resource conflict",
-                    message: error.message,
-                });
-            } else if (error instanceof InvalidAttributeException) {
-                res.status(400).json({
-                    error: "Invalid attribute",
-                    message: error.message,
-                });
-            } else {
-                res.status(500).json({
-                    error: "Internal server error",
-                    message: error.message ? error.message : "Unexpected error",
-                });
-            }
+            const owner = await this.registerController.create(req.body);
+            res.status(201).json(owner);
+        } catch (err) {
+            const { message } = this.formatError(err);
+            res.status(err.statusCode).json({ error: err.name, message });
         }
+    }
+
+    private formatError(error: Error): {
+        name: string;
+        statusCode: number;
+        message: string;
+    } {
+        if (error instanceof ResourceConflictException) {
+            return {
+                name: "Resource conflict",
+                statusCode: 409,
+                message: error.message,
+            };
+        }
+        if (error instanceof InvalidAttributeException) {
+            return {
+                name: "Invalid attribute",
+                statusCode: 400,
+                message: error.message,
+            };
+        }
+        return {
+            name: "Internal server error",
+            statusCode: 500,
+            message: error.message || "Unexpected error",
+        };
     }
 }
 
