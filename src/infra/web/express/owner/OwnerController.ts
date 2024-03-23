@@ -18,8 +18,8 @@ class OwnerController {
             const owner = await this.registerController.create(req.body);
             res.status(201).json(owner);
         } catch (err) {
-            const { message } = this.formatError(err);
-            res.status(err.statusCode).json({ error: err.name, message });
+            const { message, statusCode, name } = this.formatError(err);
+            res.status(statusCode).json({ error: name, message });
         }
     }
 
