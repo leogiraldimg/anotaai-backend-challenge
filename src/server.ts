@@ -1,21 +1,42 @@
+import "reflect-metadata";
 import express from "express";
 import bodyParser from "body-parser";
 
 import { OwnerController } from "@/infra/web/express";
 import { CreateOwnerController } from "@/adapters/owner";
 import { CreateOwnerInteractor } from "@/useCases/owner";
-import { CreateOwnerDs } from "@/infra/datasource/memory";
-import { CreateOwnerPresenter } from "./adapters/owner/CreateOwnerPresenter";
+import { CreateOwnerPresenter } from "@/adapters/owner/CreateOwnerPresenter";
+import {
+    CreateOwnerDsTypeOrm,
+    OwnerDataMapperTypeOrm,
+    OwnerRepository,
+    datasourceTypeOrm,
+} from "@/infra/datasource/typeorm";
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+datasourceTypeOrm
+    .initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!");
+    })
+    .catch((err) => {
+        console.error("Error during Data Source initialization:", err);
+        process.exit(1);
+    });
+
 const ownerController = new OwnerController(
     new CreateOwnerController(
         new CreateOwnerInteractor(
-            new CreateOwnerDs(),
+            new CreateOwnerDsTypeOrm(
+                new OwnerRepository(
+                    OwnerDataMapperTypeOrm,
+                    datasourceTypeOrm.createEntityManager()
+                )
+            ),
             new CreateOwnerPresenter()
         )
     )
