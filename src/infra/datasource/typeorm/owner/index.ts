@@ -1,3 +1,4 @@
-export * from "./CreateOwnerDsTypeOrm";
-export * from "./OwnerRepositoryTypeOrm";
+export * from "./createOwner";
+export * from "./listByIdOwner";
 export * from "./OwnerDataMapperTypeOrm";
+export * from "./OwnerRepositoryTypeOrm";

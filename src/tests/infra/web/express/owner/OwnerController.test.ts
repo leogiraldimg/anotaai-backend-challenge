@@ -1,11 +1,13 @@
 import { getMockReq, getMockRes } from "@jest-mock/express";
 
-import { createOwnerControllerInputBoundaryMock } from "../../../../mocks/CreateOwnerControllerInputBoundary.mock";
+import { createOwnerControllerInputBoundaryMock } from "@/tests/mocks/CreateOwnerControllerInputBoundary.mock";
+import { listByIdOwnerControllerInputBoundaryMock } from "@/tests/mocks/ListByIdOwnerControllerInputBoundary.mock";
 
 import { OwnerController } from "@/infra/web/express";
 import {
     InvalidAttributeException,
     ResourceConflictException,
+    ResourceNotFoundException,
 } from "@/adapters/exceptions";
 
 describe("OwnerController", () => {
@@ -15,8 +17,56 @@ describe("OwnerController", () => {
         jest.clearAllMocks();
 
         controller = new OwnerController(
-            createOwnerControllerInputBoundaryMock
+            createOwnerControllerInputBoundaryMock,
+            listByIdOwnerControllerInputBoundaryMock
         );
+    });
+
+    describe("listById", () => {
+        it("should return 200 when owner is found", async () => {
+            const req = getMockReq({
+                params: {
+                    id: "1",
+                },
+            });
+            const { res } = getMockRes();
+            listByIdOwnerControllerInputBoundaryMock.listById.mockResolvedValueOnce(
+                {
+                    id: "1",
+                    name: "John",
+                    email: "qR8iQ@example.com",
+                }
+            );
+
+            await controller.listById(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                id: "1",
+                name: "John",
+                email: "qR8iQ@example.com",
+            });
+        });
+
+        it("should return 404 when owner is not found", async () => {
+            const req = getMockReq({
+                params: {
+                    id: "1",
+                },
+            });
+            const { res } = getMockRes();
+            listByIdOwnerControllerInputBoundaryMock.listById.mockRejectedValueOnce(
+                new ResourceNotFoundException("Resource not found")
+            );
+
+            await controller.listById(req, res);
+
+            expect(res.status).toHaveBeenCalledWith(404);
+            expect(res.json).toHaveBeenCalledWith({
+                error: "Resource not found",
+                message: "Resource not found",
+            });
+        });
     });
 
     describe("create", () => {

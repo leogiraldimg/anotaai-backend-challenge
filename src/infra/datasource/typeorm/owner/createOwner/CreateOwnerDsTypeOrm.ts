@@ -3,8 +3,8 @@ import {
     CreateOwnerDsRequestModel,
     CreateOwnerDsResponseModel,
 } from "@/useCases/owner";
-import { OwnerRepository } from "./OwnerRepositoryTypeOrm";
-import { OwnerDataMapperTypeOrm } from "./OwnerDataMapperTypeOrm";
+import { OwnerRepository } from "../OwnerRepositoryTypeOrm";
+import { OwnerDataMapperTypeOrm } from "../OwnerDataMapperTypeOrm";
 
 class CreateOwnerDsTypeOrm implements CreateOwnerDsGateway {
     repository: OwnerRepository;

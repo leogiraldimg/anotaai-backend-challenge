@@ -3,15 +3,23 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import { OwnerController } from "@/infra/web/express";
-import { CreateOwnerController } from "@/adapters/owner";
-import { CreateOwnerInteractor } from "@/useCases/owner";
-import { CreateOwnerPresenter } from "@/adapters/owner/CreateOwnerPresenter";
+import {
+    CreateOwnerController,
+    CreateOwnerPresenter,
+    ListByIdOwnerController,
+    ListByIdOwnerPresenter,
+} from "@/adapters/owner";
+import {
+    CreateOwnerInteractor,
+    ListByIdOwnerInteractor,
+} from "@/useCases/owner";
 import {
     CreateOwnerDsTypeOrm,
+    ListByIdOwnerDsTypeOrm,
     OwnerDataMapperTypeOrm,
     OwnerRepository,
-    datasourceTypeOrm,
-} from "@/infra/datasource/typeorm";
+} from "@/infra/datasource/typeorm/owner";
+import { datasourceTypeOrm } from "@/infra/datasource/typeorm";
 
 const app = express();
 
@@ -39,9 +47,21 @@ const ownerController = new OwnerController(
             ),
             new CreateOwnerPresenter()
         )
+    ),
+    new ListByIdOwnerController(
+        new ListByIdOwnerInteractor(
+            new ListByIdOwnerDsTypeOrm(
+                new OwnerRepository(
+                    OwnerDataMapperTypeOrm,
+                    datasourceTypeOrm.createEntityManager()
+                )
+            ),
+            new ListByIdOwnerPresenter()
+        )
     )
 );
 app.route("/owners").post(ownerController.create.bind(ownerController));
+app.route("/owners/:id").get(ownerController.listById.bind(ownerController));
 
 if (process.env.NODE_ENV !== "test") {
     app.listen(3000);

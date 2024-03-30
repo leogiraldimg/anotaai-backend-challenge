@@ -7,7 +7,7 @@ import {
 import {
     InvalidAttributeException,
     ResourceConflictException,
-} from "../exceptions";
+} from "../../exceptions";
 
 class CreateOwnerPresenter implements CreateOwnerOutputBoundary {
     presentSuccess(
