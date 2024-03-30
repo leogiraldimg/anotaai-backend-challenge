@@ -66,6 +66,10 @@
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1"
-    }
+    },
+    "coveragePathIgnorePatterns": [
+      "node_modules/*",
+      "src/infra/datasource/typeorm/migrations/*"
+    ]
   }
 }
